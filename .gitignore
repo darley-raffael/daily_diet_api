@@ -7,4 +7,4 @@ node_modules
 
 
 # database
-temp/*.env
+src/db/*.db
