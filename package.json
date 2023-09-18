@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@fastify/cookie": "^9.0.4",
+    "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "fastify": "^4.23.2",
     "fastify-bcrypt": "^1.0.1",

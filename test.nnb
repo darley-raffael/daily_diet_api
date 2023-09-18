@@ -1,22 +1,3 @@
 {
-    "cells": [
-        {
-            "language": "typescript",
-            "source": [
-                "const date = new Date( ).toLocaleString();\n\ndate"
-            ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "text/plain",
-                            "value": [
-                                "\u001b[32m'9/16/2023, 7:46:20 PM'\u001b[39m"
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+    "cells": []
 }
