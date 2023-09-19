@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { knex } from "../db";
 import { randomUUID } from "node:crypto";
+import { bestSequenceDiet } from "../services/bestSequenceDiet";
 
 export class UserController {
   async create(request: FastifyRequest, reply: FastifyReply) {
@@ -120,5 +121,52 @@ export class UserController {
     return reply.status(200).send({
       message: "User updated",
     });
+  }
+
+  async metrics(request: FastifyRequest, reply: FastifyReply) {
+    const userIdBodySchema = z.object({
+      id: z.string().uuid({ message: "Invalid id" }),
+    });
+
+    const { id } = userIdBodySchema.parse(request.params);
+    const user = await knex("users").where({ id }).first();
+    if (!user) {
+      return reply.status(404).send({
+        message: "User not found",
+      });
+    }
+
+    /* 
+    - Deve ser possível recuperar as métricas de um usuário:
+    - ✅ Quantidade total de refeições registradas
+    - ✅ Quantidade total de refeições dentro da dieta
+    - Quantidade total de refeições fora da dieta
+    - Melhor sequência de refeições dentro da dieta
+    */
+    const metrics = await knex("daily_meals")
+      .where({ user_id: id })
+      .count("id", { as: "count_meals" })
+      .sum("is_on_the_diet", { as: "meals_in_diet" })
+      .first();
+
+    if (!metrics) {
+      return reply.status(404).send({
+        message: "Metrics not found",
+      });
+    }
+    const offDietMeal = metrics
+      ? Number(metrics.count_meals) - Number(metrics.meals_in_diet)
+      : 0;
+
+    const bestSequenceDietMetrics = await bestSequenceDiet(id);
+
+    return {
+      metrics: {
+        count_meals: metrics.count_meals,
+        meals_in_diet: metrics.meals_in_diet,
+        off_diet_meal: offDietMeal,
+        best_sequence_diet: bestSequenceDietMetrics,
+      },
+    };
   }
 }

@@ -8,5 +8,5 @@ export const app = fastify();
 
 app.register(cookie);
 app.register(bc);
-app.register(usersRoutes, { prefix: "/users" });
+app.register(usersRoutes, { prefix: "/user" });
 app.register(dailyDietRoutes, { prefix: "/diet" });
